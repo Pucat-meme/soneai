@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)http://localhost/notes%20app/pricing.php -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Notes - Pricing</title>
+    <link href="./pricing_files/css2" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #00ffff, #ff00ff); /* Updated gradient */
+            --bg-color: #fafafa;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --border-color: #E5E7EB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            position: inherit;
+            font-size: 2rem;
+            font-weight: 700;
+            padding: 2rem 0; /* Adjusted padding for height */
+            text-align: center;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            padding: 0.75rem 0; /* Adjusted padding */
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            height: 100px; /* Adjusted height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 3rem; /* Increased for prominence */
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .features {
+            list-style: none;
+            margin: 1.5rem 0;
+            flex-grow: 1;
+        }
+
+        .features li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .features li::before {
+            content: "✓";
+            color: #4F46E5;
+            font-weight: bold;
+        }
+
+        .cta-button {
+            display: inline-block;
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            transition: opacity 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            opacity: 0.9;
+        }
+
+        .pricing-card.popular {
+            border: 2px solid #4F46E5;
+            position: relative;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            SONE AI
+        </div>
+
+        <div class="nav-container">
+
+        </div>
+
+        <div class="header">
+            <h1>Simple, transparent pricing</h1>
+            <p>Choose the perfect plan</p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="plan-name">Basic</div>
+                <div class="plan-price">Free<span> forever</span></div>
+                <ul class="features">
+                    <li>5 AI-powered summaries</li>
+                    <li>Basic note organization</li>
+                    <li>Web access</li>
+                    <li>Community support</li>
+                </ul>
+                <a href="loading.html" class="cta-button">Get Started</a>
+            </div>
+
+            <div class="pricing-card popular">
+                <div class="popular-badge">Most Popular</div>
+                <div class="plan-name">Pro</div>
+                <div class="plan-price">$9.99<span>/month</span></div>
+                <ul class="features">
+                    <li>Unlimited AI summaries</li>
+                    <li>Advanced organization</li>
+                    <li>Mobile app access</li>
+                    <li>Priority support</li>
+                    <li>Export to PDF/Word</li>
+                </ul>
+                <a href="payment.html" class="cta-button">Upgrade to Pro</a>
+            </div>
+
+            <div class="pricing-card">
+                <div class="plan-name">Team</div>
+                <div class="plan-price">$29.99<span>/month</span></div>
+                <ul class="features">
+                    <li>Everything in Pro</li>
+                    <li>Team collaboration</li>
+                    <li>Admin dashboard</li>
+                    <li>API access</li>
+                    <li>24/7 premium support</li>
+                </ul>
+                <a href="" class="cta-button">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+
+
+</body></html>
