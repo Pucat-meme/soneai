@@ -103,9 +103,9 @@
             animation: fadeInUp 0.5s ease forwards;
             white-space: pre-wrap;
             word-wrap: break-word;
-            overflow-wrap: break-word; /* Added for better word wrapping */
-            width: fit-content; /* Added to ensure proper sizing */
-            max-width: 80%; /* Maintain maximum width */
+            overflow-wrap: break-word;
+            width: fit-content;
+            max-width: 80%;
         }
 
         @keyframes fadeInUp {
@@ -182,31 +182,31 @@
         }
 
         .typing-indicator {
-            display: flex;
-            gap: 3px; /* Reduced gap between dots */
-            padding: 6px 10px; /* Reduced padding */
-            background: rgba(255, 0, 255, 0.1);
-            border-radius: 12px; /* Slightly reduced border radius */
-            opacity: 0;
-            animation: fadeIn 0.3s ease forwards;
-            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 0, 255, 0.2);
+            border-radius: 15px;
             margin-bottom: 0.8rem;
+            align-self: flex-start;
         }
 
         .typing-indicator span {
-            width: 4px; /* Reduced dot size */
-            height: 4px; /* Reduced dot size */
+            width: 8px;
+            height: 8px;
             background: rgba(255, 255, 255, 0.7);
             border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out;
+            display: inline-block;
+            margin: 0 2px;
         }
 
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        .typing-indicator span:nth-child(1) { animation: bounce 1.4s infinite 0s; }
+        .typing-indicator span:nth-child(2) { animation: bounce 1.4s infinite 0.2s; }
+        .typing-indicator span:nth-child(3) { animation: bounce 1.4s infinite 0.4s; }
 
         @keyframes bounce {
             0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-4px); } /* Reduced bounce height */
+            40% { transform: translateY(-8px); }
         }
 
         @media (max-width: 768px) {
@@ -269,17 +269,17 @@
     <header>
         <div class="logo">SONE AI</div>
         <nav>
-            <a href="">HOME</a>
-            <a href="notes.html">NOTES</a>
-            <a href="pricing.html">PRICING</a>
+            <a href="https://soneai.vercel.app/">HOME</a>
+            <a href="https://soneai.vercel.app/notes.html">NOTES</a>
+            <a href="https://soneai.vercel.app/pricing.html">PRICING</a>
         </nav>
     </header>
     <main>
-        <div class="chat-window" id="chatWindow">
-            <div class="chat-container" id="chatContainer"></div>
+        <div class="chat-window open" id="chatWindow">
+            <div class="chat-container" id="chatContainer"><div class="message user-message">hey</div><div class="message ai-message">Hey, how can I help you today?</div><div class="message user-message">whats the date</div><div class="message ai-message">Today's date is Sunday, October 6, 2024.</div><div class="message user-message">what is a blackhole</div><div class="message ai-message">A black hole is a region in space where the gravitational pull is so strong that nothing, not even light, can escape from it. They are formed when a massive star collapses at the end of its life cycle. Black holes are detected through their effect on nearby objects and light.</div><div class="message user-message">whats my name</div><div class="message ai-message">I'm sorry, but I don't know your name yet. You can tell me by saying 'My name is [your name]'.</div><div class="message user-message">my name is suhaan</div><div class="message ai-message">Thank you! I've updated your name to suhaan.</div><div class="message user-message">whats my name</div><div class="message ai-message">Your name is suhaan.</div><div class="message user-message">call me suhan</div><div class="message ai-message typewriter">I'm so</div><div class="message user-message">whats your name</div><div class="message ai-message">My name is Sone. Nice to meet you!</div><div class="message user-message">how are you</div><div class="message ai-message">I'm functioning well, thank you for asking! How about you?</div><div class="message user-message">im good</div><div class="message ai-message">That's great to hear!</div><div class="message user-message">whats my name</div><div class="message ai-message">Your name is suhaan.</div><div class="message user-message">my name is lev</div><div class="message ai-message">Thank you! I've updated your name to lev.</div><div class="message user-message">whats my name</div><div class="message ai-message">Your name is lev.</div><div class="message user-message">what is gravity</div><div class="message ai-message">A natural phenomenon by which objects with mass attract one another, the force that governs the motion of planets and other celestial bodies.</div><div class="message user-message">im doing well</div><div class="message ai-message">I'm glad you're doing well!</div></div>
             <div class="input-container">
                 <form id="chatForm" class="input-wrapper">
-                    <textarea class="note-input" id="userInput" placeholder="Message Sone" required=""></textarea>
+                    <textarea class="note-input" id="userInput" placeholder="Message Sone" required="" style="height: auto;"></textarea>
                     <button type="submit" class="generate-btn">Send</button>
                 </form>
             </div>
@@ -287,226 +287,243 @@
     </main>
 
     <script>
-        const chatForm = document.getElementById('chatForm');
-        const chatContainer = document.getElementById('chatContainer');
-        const userInput = document.getElementById('userInput');
-        const chatWindow = document.getElementById('chatWindow');
+const chatForm = document.getElementById('chatForm');
+const chatContainer = document.getElementById('chatContainer');
+const userInput = document.getElementById('userInput');
+const chatWindow = document.getElementById('chatWindow');
 
-        let bkTree = null;
-        let isFirstMessage = true;
+let isFirstMessage = true;
+let typingSpeed = 20; // Default typing speed (ms per character)
+let chatbotData = [];
+let userName = '';
 
-        class BKTreeNode {
-            constructor(word, data) {
-                this.word = word;
-                this.data = data;
-                this.children = new Map();
-            }
-        }
+// Load chat history and user name from localStorage
+function loadChatHistory() {
+    const savedChat = localStorage.getItem('chatHistory');
+    if (savedChat) {
+        chatContainer.innerHTML = savedChat;
+        isFirstMessage = false;
+        chatWindow.classList.add('open');
+    }
+    userName = localStorage.getItem('userName') || '';
+}
 
-        class BKTree {
-            constructor() {
-                this.root = null;
-            }
+// Save chat history to localStorage
+function saveChatHistory() {
+    localStorage.setItem('chatHistory', chatContainer.innerHTML);
+}
 
-            insert(word, data) {
-                if (!this.root) {
-                    this.root = new BKTreeNode(word, data);
-                    return;
-                }
+// Save user name to localStorage
+function saveUserName() {
+    localStorage.setItem('userName', userName);
+}
 
-                let node = this.root;
-                while (true) {
-                    const distance = this.levenshteinDistance(word, node.word);
-                    if (distance === 0) {
-                        // Word already exists, update data
-                        node.data = data;
-                        return;
-                    }
-
-                    if (!node.children.has(distance)) {
-                        node.children.set(distance, new BKTreeNode(word, data));
-                        return;
-                    }
-
-                    node = node.children.get(distance);
-                }
-            }
-
-            search(word, maxDistance) {
-                const result = [];
-                this._search(this.root, word, maxDistance, result);
-                return result;
-            }
-
-            _search(node, word, maxDistance, result) {
-                if (!node) return;
-
-                const distance = this.levenshteinDistance(word, node.word);
-                if (distance <= maxDistance) {
-                    result.push({ word: node.word, data: node.data, distance });
-                }
-
-                for (let i = Math.max(0, distance - maxDistance); i <= distance + maxDistance; i++) {
-                    if (node.children.has(i)) {
-                        this._search(node.children.get(i), word, maxDistance, result);
-                    }
-                }
-            }
-
-            levenshteinDistance(str1, str2) {
-                const m = str1.length;
-                const n = str2.length;
-                const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-
-                for (let i = 0; i <= m; i++) dp[i][0] = i;
-                for (let j = 0; j <= n; j++) dp[0][j] = j;
-
-                for (let i = 1; i <= m; i++) {
-                    for (let j = 1; j <= n; j++) {
-                        if (str1[i - 1] === str2[j - 1]) {
-                            dp[i][j] = dp[i - 1][j - 1];
-                        } else {
-                            dp[i][j] = Math.min(
-                                dp[i - 1][j] + 1,
-                                dp[i][j - 1] + 1,
-                                dp[i - 1][j - 1] + 1
-                            );
-                        }
-                    }
-                }
-
-                return dp[m][n];
-            }
-        }
-
-        async function loadChatbotData() {
-            try {
-                const response = await fetch('chatbot_data.csv');
-                const csvText = await response.text();
-                const rows = csvText.split('\n').slice(1);
-                bkTree = new BKTree();
-                rows.forEach(row => {
-                    const [question, ...responseParts] = row.split(',');
-                    const response = responseParts.join(',').trim().replace(/(^"|"$)/g, '');
-                    const cleanedQuestion = cleanText(question.trim().replace(/(^"|"$)/g, ''));
-                    bkTree.insert(cleanedQuestion, response);
-                });
-            } catch (error) {
-                console.error('Error loading chatbot data:', error);
-                bkTree = new BKTree();
-                const defaultData = [
-                    { question: "hello", response: "Hello! How can I assist you today?" },
-                    { question: "how are you", response: "I'm functioning well, thank you for asking. How may I help you?" },
-                    { question: "what is your name", response: "My name is SONE AI. It's nice to meet you!" },
-                    { question: "bye", response: "Goodbye! Feel free to return if you have any more questions." }
-                ];
-                defaultData.forEach(item => bkTree.insert(cleanText(item.question), item.response));
-            }
-        }
-
-        loadChatbotData();
-
-        function createTypingIndicator() {
-            return `
-                <div class="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            `;
-        }
-
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        function cleanText(text) {
-            return text.toLowerCase().trim().replace(/[^\w\s]/g, '');
-        }
-
-        function findBestMatch(input) {
-            const cleanedInput = cleanText(input);
-            const maxDistance = Math.floor(cleanedInput.length * 0.3); // Allow up to 30% difference
-            const matches = bkTree.search(cleanedInput, maxDistance);
-
-            if (matches.length > 0) {
-                matches.sort((a, b) => a.distance - b.distance);
-                return matches[0].data;
-            }
-
-            return "I'm sorry, I don't understand. Could you please rephrase that?";
-        }
-
-        chatForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const message = userInput.value.trim();
-            if (message) {
-                if (isFirstMessage) {
-                    chatWindow.classList.add('open');
-                    isFirstMessage = false;
-                }
-
-                addMessage('user', escapeHtml(message));
-                userInput.value = '';
-                userInput.style.height = 'auto';
-                const loadingMessage = addMessage('ai', createTypingIndicator());
-
-                setTimeout(() => {
-                    loadingMessage.style.opacity = '0';
-                    setTimeout(() => {
-                        loadingMessage.remove();
-                        
-                        const response = findBestMatch(message);
-                        
-                        const messageElement = document.createElement('div');
-                        messageElement.classList.add('message', 'ai-message');
-                        messageElement.textContent = response;
-                        chatContainer.appendChild(messageElement);
-                        
-                        setTimeout(() => {
-                            messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                        }, 100);
-                    }, 300);
-                }, 1500);
-            }
+async function loadChatbotData() {
+    try {
+        const response = await fetch('chatbot_data.csv');
+        const csvText = await response.text();
+        const rows = csvText.split('\n').slice(1); // Skip header row
+        chatbotData = rows.map(row => {
+            const [question, ...responseParts] = row.split(',');
+            return {
+                question: cleanText(question.trim().replace(/(^"|"$)/g, '')),
+                response: responseParts.join(',').trim().replace(/(^"|"$)/g, '')
+            };
         });
+        console.log(`Loaded ${chatbotData.length} entries from CSV`);
+    } catch (error) {
+        console.error('Error loading chatbot data:', error);
+        chatbotData = [
+            { question: "hello", response: "Hello! How can I assist you today?" },
+            { question: "how are you", response: "I'm functioning well, thank you for asking. How may I help you?" },
+            { question: "what is your name", response: "My name is SONE AI. It's nice to meet you!" },
+            { question: "bye", response: "Goodbye! Feel free to return if you have any more questions." }
+        ];
+    }
+}
 
-        function addMessage(sender, message) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', sender + '-message');
-            
-            if (message.includes('typing-indicator')) {
-                messageElement.innerHTML = message;
+loadChatbotData();
+loadChatHistory();
+
+function cleanText(text) {
+    return text.toLowerCase().trim().replace(/[^\w\s]/g, '');
+}
+
+function getCurrentTime() {
+    const now = new Date();
+    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function getCurrentDate() {
+    const now = new Date();
+    return now.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function findBestMatch(input) {
+    const cleanedInput = cleanText(input);
+    
+    // Check for time and date queries
+    if (cleanedInput.includes('time') || cleanedInput.includes('clock')) {
+        return `The current time is ${getCurrentTime()}.`;
+    }
+    if (cleanedInput.includes('date') || cleanedInput.includes('day')) {
+        return `Today's date is ${getCurrentDate()}.`;
+    }
+
+    // Check for name-related queries
+    if (cleanedInput.includes('my name is')) {
+        const newName = input.split('my name is')[1].trim();
+        return handleNameChange(newName);
+    }
+    if (cleanedInput.includes('whats my name') || cleanedInput.includes('what is my name')) {
+        return handleNameQuery();
+    }
+
+    let bestMatch = null;
+    let bestScore = Infinity;
+
+    for (const item of chatbotData) {
+        const score = levenshteinDistance(cleanedInput, item.question);
+        if (score < bestScore) {
+            bestScore = score;
+            bestMatch = item;
+        }
+    }
+
+    if (bestMatch && bestScore <= Math.floor(cleanedInput.length * 0.3)) {
+        return bestMatch.response;
+    }
+
+    return "I'm sorry, I don't understand. Could you please rephrase that?";
+}
+
+function handleNameChange(newName) {
+    userName = newName;
+    saveUserName();
+    return `Thank you! I've updated your name to ${userName}.`;
+}
+
+function handleNameQuery() {
+    if (userName) {
+        return `Your name is ${userName}.`;
+    } else {
+        return "I'm sorry, but I don't know your name yet. You can tell me by saying 'My name is [your name]'.";
+    }
+}
+
+function levenshteinDistance(str1, str2) {
+    const m = str1.length;
+    const n = str2.length;
+    const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (str1[i - 1] === str2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
             } else {
-                messageElement.textContent = message;
+                dp[i][j] = Math.min(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + 1
+                );
             }
+        }
+    }
+
+    return dp[m][n];
+}
+
+function createTypingIndicator() {
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.innerHTML = '<span></span><span></span><span></span>';
+    return indicator;
+}
+
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function typeWriter(element, text, index = 0) {
+    if (index < text.length) {
+        element.innerHTML += text.charAt(index);
+        setTimeout(() => typeWriter(element, text, index + 1), typingSpeed);
+    } else {
+        element.classList.remove('typewriter');
+    }
+}
+
+chatForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const message = userInput.value.trim();
+    if (message) {
+        if (isFirstMessage) {
+            chatWindow.classList.add('open');
+            isFirstMessage = false;
+        }
+
+        addMessage('user', escapeHtml(message));
+        userInput.value = '';
+        userInput.style.height = 'auto';
+        const loadingIndicator = createTypingIndicator();
+        chatContainer.appendChild(loadingIndicator);
+
+        setTimeout(() => {
+            loadingIndicator.remove();
             
+            const response = findBestMatch(message);
+            
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'ai-message', 'typewriter');
             chatContainer.appendChild(messageElement);
+            
+            typeWriter(messageElement, response);
             
             setTimeout(() => {
                 messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                saveChatHistory();
             }, 100);
-            
-            return messageElement;
-        }
+        }, 1500);
+    }
+});
 
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            const newHeight = Math.min(this.scrollHeight, 100);
-            this.style.height = newHeight + 'px';
-        });
+function addMessage(sender, message) {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', sender + '-message');
+    messageElement.textContent = message;
+    chatContainer.appendChild(messageElement);
+    
+    setTimeout(() => {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
+    
+    return messageElement;
+}
 
-        userInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                chatForm.dispatchEvent(new Event('submit'));
-            }
-        });
+userInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    const newHeight = Math.min(this.scrollHeight, 100);
+    this.style.height = newHeight + 'px';
+});
+
+userInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        chatForm.dispatchEvent(new Event('submit'));
+    }
+});
+
+function changeTypingSpeed(speed) {
+    typingSpeed = speed;
+}
     </script>
 
 </body></html>
