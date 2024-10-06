@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SONE AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
@@ -14,6 +14,8 @@
     --scrollbar-bg: rgba(255, 255, 255, 0.05);
     --scrollbar-thumb: linear-gradient(45deg, #00ffff, #ff00ff);
     --scrollbar-thumb-hover: linear-gradient(45deg, #ff00ff, #00ffff);
+    --sidebar-bg: rgba(255, 255, 255, 0.05);
+    --sidebar-hover: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -28,20 +30,22 @@ body {
     color: var(--text-color);
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
 }
 
-header {
+.sidebar {
+    width: 250px;
+    background: var(--sidebar-bg);
     padding: 1rem;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    background: rgba(255, 255, 255, 0.05);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
+    margin-bottom: 1rem;
 }
 
 .logo {
@@ -52,17 +56,47 @@ header {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    margin-bottom: 1rem;
 }
 
-nav a {
-    color: var(--text-color);
-    text-decoration: none;
-    margin-left: 1rem;
-    transition: text-shadow 0.3s ease;
+.new-chat-btn, .delete-chat-btn {
+    background: var(--button-gradient);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    color: #ffffff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
 }
 
-nav a:hover {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+.new-chat-btn:hover, .delete-chat-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.chat-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.chat-item {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-item:hover {
+    background: var(--sidebar-hover);
 }
 
 main {
@@ -70,20 +104,15 @@ main {
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-top: 4rem;
-    height: calc(100vh - 4rem);
+    height: 100vh;
 }
 
 .chat-window {
-    width: 100%;
-    max-width: 800px;
-    height: 100%;
-    background: var(--input-bg);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
+    background: var(--input-bg);
+    border-radius: 10px;
     overflow: hidden;
 }
 
@@ -91,29 +120,9 @@ main {
     flex-grow: 1;
     padding: 1rem;
     overflow-y: auto;
+    scroll-behavior: smooth;
     display: flex;
     flex-direction: column;
-    scroll-behavior: smooth;
-}
-
-/* Updated modern and sleek scrollbar styles */
-.chat-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-.chat-container::-webkit-scrollbar-track {
-    background: var(--scrollbar-bg);
-    border-radius: 3px;
-}
-
-.chat-container::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb);
-    border-radius: 3px;
-    transition: background 0.3s ease;
-}
-
-.chat-container::-webkit-scrollbar-thumb:hover {
-    background: var(--scrollbar-thumb-hover);
 }
 
 .message {
@@ -144,41 +153,39 @@ main {
 .user-message {
     align-self: flex-end;
     background: rgba(0, 255, 255, 0.2);
-    animation-delay: 0s;
 }
 
 .ai-message {
     align-self: flex-start;
     background: rgba(255, 0, 255, 0.2);
-    animation-delay: 0.5s;
 }
 
 .input-container {
+    color: black;
     padding: 1rem;
-    background: rgba(0, 0, 0, 0.3);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--button-gradient);
+    opacity: 1;
 }
 
 .input-wrapper {
     display: flex;
     gap: 0.5rem;
-    background: var(--input-bg);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 25px;
     padding: 0.5rem;
 }
 
 .note-input {
+    font-family: 'Poppins', sans-serif;
     flex-grow: 1;
     background: none;
     border: none;
     padding: 0.5rem;
-    color: var(--text-color);
+    color: black;
     font-size: 1rem;
     resize: none;
-    line-height: 1.5;
     max-height: 100px;
-    min-height: 40px;
+    min-height: 20px;
 }
 
 .note-input:focus {
@@ -195,7 +202,6 @@ main {
     border-radius: 20px;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    flex-shrink: 0;
 }
 
 .generate-btn:hover {
@@ -203,6 +209,33 @@ main {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* Updated scrollbar styles */
+.chat-container::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar,
+.chat-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chat-container::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track,
+.chat-list::-webkit-scrollbar-track {
+    background: var(--scrollbar-bg);
+}
+
+.chat-container::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb,
+.chat-list::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 5px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:hover,
+.chat-list::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Typing indicator styles */
 .typing-indicator {
     display: inline-flex;
     align-items: center;
@@ -220,82 +253,52 @@ main {
     border-radius: 50%;
     display: inline-block;
     margin: 0 2px;
+    animation: bounce 1.4s infinite;
 }
 
-.typing-indicator span:nth-child(1) { animation: bounce 1.4s infinite 0s; }
-.typing-indicator span:nth-child(2) { animation: bounce 1.4s infinite 0.2s; }
-.typing-indicator span:nth-child(3) { animation: bounce 1.4s infinite 0.4s; }
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
 
 @keyframes bounce {
-    0%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-8px); }
+    0%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-8px);
+    }
 }
 
 @media (max-width: 768px) {
-    .header {
-        padding: 0.5rem;
+    body {
+        flex-direction: column;
     }
 
-    .logo {
-        font-size: 1.5rem;
-    }
-
-    nav a {
-        margin-left: 0.5rem;
-        font-size: 0.9rem;
+    .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 30vh;
     }
 
     main {
-        padding: 0.5rem;
-    }
-
-    .message {
-        max-width: 85%;
-        padding: 0.6rem 0.8rem;
-        font-size: 0.95rem;
-    }
-
-    .generate-btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .chat-window {
-        border-radius: 0;
-        height: calc(100vh - 4.5rem);
-    }
-
-    .message {
-        max-width: 90%;
-        font-size: 0.9rem;
-    }
-
-    .input-wrapper {
-        padding: 0.4rem;
-    }
-
-    .note-input {
-        font-size: 0.9rem;
-    }
-
-    .generate-btn {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.85rem;
+        height: 70vh;
     }
 }
     </style>
 </head>
 <body>
-<header>
-        <div class="logo">SONE AI</div>
-        <nav>
-            <a href="https://soneai.vercel.app/">HOME</a>
-            <a href="https://soneai.vercel.app/notes.html">NOTES</a>
-            <a href="https://soneai.vercel.app/pricing.html">PRICING</a>
-        </nav>
-    </header>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">SONE 1.1</div>
+            <button class="new-chat-btn" id="newChatBtn">New Chat</button>
+        </div>
+        <div class="chat-list" id="chatList"></div>
+        <button class="delete-chat-btn" id="deleteChatBtn">Delete Chat</button>
+    </aside>
     <main>
         <div class="chat-window" id="chatWindow">
             <div class="chat-container" id="chatContainer"></div>
@@ -309,22 +312,25 @@ main {
     </main>
 
     <script>
-const chatForm = document.getElementById('chatForm');
+const sidebar = document.getElementById('sidebar');
+const chatList = document.getElementById('chatList');
+const newChatBtn = document.getElementById('newChatBtn');
+const deleteChatBtn = document.getElementById('deleteChatBtn');
 const chatContainer = document.getElementById('chatContainer');
+const chatForm = document.getElementById('chatForm');
 const userInput = document.getElementById('userInput');
-const chatWindow = document.getElementById('chatWindow');
 
-let isFirstMessage = true;
-let typingSpeed = 20; // Default typing speed (ms per character)
+let chats = JSON.parse(localStorage.getItem('chats')) || [];
+let currentChatId = localStorage.getItem('currentChatId') || null;
 let chatbotData = [];
 let userName = '';
+let typingSpeed = 20;
+let isTyping = false;
 
-/// Load user name from localStorage
 function loadUserName() {
     userName = localStorage.getItem('userName') || '';
 }
 
-// Save user name to localStorage
 function saveUserName() {
     localStorage.setItem('userName', userName);
 }
@@ -333,7 +339,7 @@ async function loadChatbotData() {
     try {
         const response = await fetch('chatbot_data.csv');
         const csvText = await response.text();
-        const rows = csvText.split('\n').slice(1); // Skip header row
+        const rows = csvText.split('\n').slice(1);
         chatbotData = rows.map(row => {
             const [question, ...responseParts] = row.split(',');
             return {
@@ -341,7 +347,6 @@ async function loadChatbotData() {
                 response: responseParts.join(',').trim().replace(/(^"|"$)/g, '')
             };
         });
-        console.log(`Loaded ${chatbotData.length} entries from CSV`);
     } catch (error) {
         console.error('Error loading chatbot data:', error);
         chatbotData = [
@@ -353,8 +358,83 @@ async function loadChatbotData() {
     }
 }
 
-loadChatbotData();
-loadUserName();
+function updateChatList() {
+    chatList.innerHTML = '';
+    chats.forEach((chat) => {
+        const chatItem = document.createElement('div');
+        chatItem.classList.add('chat-item');
+        chatItem.textContent = chat.title || 'New Chat';
+        chatItem.dataset.id = chat.id;
+        if (chat.id === currentChatId) {
+            chatItem.style.background = 'var(--sidebar-hover)';
+        }
+        chatItem.addEventListener('click', () => loadChat(chat.id));
+        chatList.appendChild(chatItem);
+    });
+}
+
+function createNewChat() {
+    const newChat = {
+        id: Date.now().toString(),
+        messages: [],
+        title: 'New Chat'
+    };
+    chats.push(newChat);
+    currentChatId = newChat.id;
+    localStorage.setItem('chats', JSON.stringify(chats));
+    localStorage.setItem('currentChatId', currentChatId);
+    updateChatList();
+    chatContainer.innerHTML = '';
+}
+
+function loadChat(chatId) {
+    currentChatId = chatId;
+    localStorage.setItem('currentChatId', currentChatId);
+    const chat = chats.find(c => c.id === chatId);
+    if (chat) {
+        chatContainer.innerHTML = '';
+        chat.messages.forEach(msg => {
+            addMessage(msg.sender, msg.content, false);
+        });
+        updateChatList();
+    }
+}
+
+function deleteCurrentChat() {
+    if (currentChatId) {
+        chats = chats.filter(chat => chat.id !== currentChatId);
+        localStorage.setItem('chats', JSON.stringify(chats));
+        if (chats.length > 0) {
+            loadChat(chats[chats.length - 1].id);
+        } else {
+            createNewChat();
+        }
+    }
+}
+
+function saveChatHistory() {
+    if (currentChatId) {
+        const currentChat = chats.find(chat => chat.id === currentChatId);
+        if (currentChat) {
+            const messages = Array.from(chatContainer.children)
+                .filter(element => element.classList.contains('message'))
+                .map(msgElement => ({
+                    sender: msgElement.classList.contains('user-message') ? 'user' : 'ai',
+                    content: msgElement.textContent
+                }));
+            
+            currentChat.messages = messages;
+            
+            if (messages.length > 0 && messages[0].sender === 'user') {
+                currentChat.title = messages[0].content.substring(0, 30) + 
+                    (messages[0].content.length > 30 ? '...' : '');
+            }
+            
+            localStorage.setItem('chats', JSON.stringify(chats));
+            updateChatList();
+        }
+    }
+}
 
 function cleanText(text) {
     return text.toLowerCase().trim().replace(/[^\w\s]/g, '');
@@ -373,7 +453,6 @@ function getCurrentDate() {
 function findBestMatch(input) {
     const cleanedInput = cleanText(input);
     
-    // Check for time and date queries
     if (cleanedInput.includes('time') || cleanedInput.includes('clock')) {
         return `The current time is ${getCurrentTime()}.`;
     }
@@ -381,7 +460,11 @@ function findBestMatch(input) {
         return `Today's date is ${getCurrentDate()}.`;
     }
 
-    // Check for name-related queries
+    const peopleKeywords = ['who is', 'tell me about', 'what do you know about', 'information on'];
+    if (peopleKeywords.some(keyword => cleanedInput.includes(keyword))) {
+        return "I'm an AI language model and don't have real-time information about specific individuals. For the most up-to-date and accurate information about people, I recommend checking reliable online sources.";
+    }
+
     if (cleanedInput.includes('my name is')) {
         const newName = input.split('my name is')[1].trim();
         return handleNameChange(newName);
@@ -399,10 +482,6 @@ function findBestMatch(input) {
             bestScore = score;
             bestMatch = item;
         }
-    }
-
-    if (bestMatch && bestScore <= Math.floor(cleanedInput.length * 0.3)) {
-        return bestMatch.response;
     }
 
     if (bestMatch && bestScore <= Math.floor(cleanedInput.length * 0.3)) {
@@ -467,68 +546,76 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
-function typeWriter(element, text, index = 0) {
-    if (index < text.length) {
-        element.innerHTML += text.charAt(index);
-        setTimeout(() => typeWriter(element, text, index + 1), typingSpeed);
-        
-        // Auto-scroll during typing
-        element.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    } else {
-        element.classList.remove('typewriter');
-        
-        // Final scroll after typing is complete
-        setTimeout(() => {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }, 100);
+function addMessage(sender, content, shouldSave = true) {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', `${sender}-message`);
+    messageElement.textContent = content;
+    chatContainer.appendChild(messageElement);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (shouldSave) {
+        saveChatHistory();
     }
+    return messageElement;
+}
+
+async function typeWriter(element, text) {
+    isTyping = true;
+    let index = 0;
+    element.textContent = '';
+    
+    return new Promise((resolve) => {
+        function type() {
+            if (index < text.length) {
+                element.textContent += text.charAt(index);
+                element.scrollIntoView({ behavior: 'auto', block: 'end' });
+                index++;
+                setTimeout(type, typingSpeed);
+            } else {
+                element.classList.remove('typewriter');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                isTyping = false;
+                resolve();
+            }
+        }
+        type();
+    });
 }
 
 chatForm.addEventListener('submit', async function(e) {
     e.preventDefault();
+    if (isTyping) return;
+    
     const message = userInput.value.trim();
     if (message) {
-        if (isFirstMessage) {
-            chatWindow.classList.add('open');
-            isFirstMessage = false;
-        }
-
+        // Add user message
         addMessage('user', escapeHtml(message));
         userInput.value = '';
         userInput.style.height = 'auto';
+
+        // Show typing indicator
         const loadingIndicator = createTypingIndicator();
         chatContainer.appendChild(loadingIndicator);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
 
-        setTimeout(() => {
-            loadingIndicator.remove();
-            
-            const response = findBestMatch(message);
-            
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', 'ai-message', 'typewriter');
-            chatContainer.appendChild(messageElement);
-            
-            typeWriter(messageElement, response);
-            
-            setTimeout(() => {
-                messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                saveChatHistory();
-            }, 100);
-        }, 1500);
+        // Get AI response
+        const response = findBestMatch(message);
+
+        // Wait for a moment to simulate thinking
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        loadingIndicator.remove();
+
+        // Create AI message element
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', 'ai-message', 'typewriter');
+        chatContainer.appendChild(messageElement);
+
+        // Type out the response
+        await typeWriter(messageElement, response);
+        
+        // Save the complete chat history after typing is done
+        saveChatHistory();
     }
 });
-
-function addMessage(sender, message) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message', sender + '-message');
-    messageElement.textContent = message;
-    chatContainer.appendChild(messageElement);
-    
-    // Scroll to the new message
-    messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    
-    return messageElement;
-}
 
 userInput.addEventListener('input', function() {
     this.style.height = 'auto';
@@ -547,15 +634,23 @@ function changeTypingSpeed(speed) {
     typingSpeed = speed;
 }
 
-        function isMobileDevice() {
-    return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+newChatBtn.addEventListener('click', createNewChat);
+deleteChatBtn.addEventListener('click', deleteCurrentChat);
+
+// Initialize
+loadUserName();
+loadChatbotData();
+
+// Initialize chat
+if (chats.length === 0) {
+    createNewChat();
+} else if (currentChatId) {
+    loadChat(currentChatId);
+} else {
+    loadChat(chats[chats.length - 1].id);
 }
 
-if (isMobileDevice()) {
-    // Redirect to mobile version of the website
-    window.location.href = "https://sonelabs.vercel.app"; // Replace with your mobile URL
-}
-
+updateChatList();
     </script>
 </body>
 </html>
