@@ -1,14 +1,7 @@
-<?php
-require_once 'functions.php';
-
-requireLogin();
-
-?>
-
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<!-- saved from url=(0038)http://localhost/notes%20app/notes.php -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SONE AI - Notes</title>
     <style>
@@ -252,10 +245,10 @@ requireLogin();
 
         <div class="nav-container">
             <nav>
-                <a href="index.php">HOME</a>
-                <a href="notes.php">NOTES</a>
-                <a href="pricing.php">PRICING</a>
-                <a href="logout.php">LOGOUT</a>
+                <a href="http://localhost/notes%20app/index.php">HOME</a>
+                <a href="http://localhost/notes%20app/notes.php">NOTES</a>
+                <a href="http://localhost/notes%20app/pricing.php">PRICING</a>
+                <a href="http://localhost/notes%20app/logout.php">LOGOUT</a>
             </nav>
         </div>
 
@@ -263,22 +256,30 @@ requireLogin();
             <div class="sidebar">
                 <button class="add-note-btn" id="addNoteBtn">Add Note</button>
                 <div class="notes-list" id="notesList">
-                    <!-- Notes will be dynamically added here -->
+                <div class="note-item" onclick="loadNote({&quot;id&quot;:1728065228963,&quot;title&quot;:&quot;new&quot;,&quot;content&quot;:&quot;&quot;,&quot;timestamp&quot;:&quot;2024-10-04T18:07:11.748Z&quot;})">
+                    <h3>new</h3>
+                    <p>10/4/2024</p>
                 </div>
+            
+                <div class="note-item" onclick="loadNote({&quot;id&quot;:1728065225062,&quot;title&quot;:&quot;Untitled Note&quot;,&quot;content&quot;:&quot;&quot;,&quot;timestamp&quot;:&quot;2024-10-04T18:07:05.062Z&quot;})">
+                    <h3>Untitled Note</h3>
+                    <p>10/4/2024</p>
+                </div>
+            </div>
             </div>
 
             <div class="main-content">
                 <div class="note-header">
-                    <input type="text" id="noteTitle" placeholder="Welcome!" style="background: transparent; border: none; color: var(--text-primary); font-size: 1.2rem; outline: none;">
+                    <input type="text" id="noteTitle" placeholder="Welcome!" style="background: transparent; border: none; color: var(--text-primary); font-size: 1.2rem; outline: none;" disabled="">
                     <div class="note-actions">
-                        <button class="icon-button" id="searchBtn" title="Search"><img src="search.svg" alt=""></button>
-                        <button class="icon-button" id="summarizeBtn" title="Summarize"><img src="summarization.svg" alt=""></button>
+                        <button class="icon-button" id="searchBtn" title="Search"><img src="./notes_files/search.svg" alt=""></button>
+                        <button class="icon-button" id="summarizeBtn" title="Summarize"><img src="./notes_files/summarization.svg" alt=""></button>
                         <button class="icon-button" id="deleteBtn" title="Delete">Remove Note</button>
-                        <button class="icon-button" id="closeBtn" title="Close"><img src="close.svg" alt=""></button>
+                        <button class="icon-button" id="closeBtn" title="Close"><img src="./notes_files/close.svg" alt=""></button>
                     </div>
                 </div>
                 <div class="note-content">
-                    <textarea id="noteEditor" placeholder="Start typing your note..."></textarea>
+                    <textarea id="noteEditor" placeholder="Start typing your note..." disabled=""></textarea>
                 </div>
             </div>
         </div>
@@ -293,7 +294,7 @@ requireLogin();
     <div class="popup" id="summaryPopup">
         <h3>AI Summary</h3>
         <div id="summaryContent" style="margin-top: 1rem;"></div>
-        <button class="add-note-btn" style="margin-top: 1rem; width: 100%;" onclick="document.getElementById('summaryPopup').style.display='none'">Close</button>
+        <button class="add-note-btn" style="margin-top: 1rem; width: 100%;" onclick="document.getElementById(&#39;summaryPopup&#39;).style.display=&#39;none&#39;">Close</button>
     </div>
 
     <div class="popup-overlay" id="popupOverlay"></div>
@@ -410,6 +411,7 @@ requireLogin();
         renderNotesList();
         clearEditor();
     </script>
-</body>
-</html>
 
+
+
+</body></html>
