@@ -1,0 +1,415 @@
+<?php
+require_once 'functions.php';
+
+requireLogin();
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SONE AI - Notes</title>
+    <style>
+       :root {
+            --primary-gradient: linear-gradient(135deg, #4F46E5, #7C3AED);
+            --bg-color: #111827;
+            --sidebar-bg: #1F2937;
+            --text-primary: #F9FAFB;
+            --text-secondary: #9CA3AF;
+            --border-color: #374151;
+            --card-bg: #1F2937;
+            --hover-color: #2D3748;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+.logo {
+    font-size: 2rem;
+    font-weight: 600;
+    padding: 1.5rem 0;
+    text-align: center;
+    background: var(--primary-gradient);
+    background-clip: text;
+    -webkit-background-clip: text; /* Required for WebKit browsers */
+    -webkit-text-fill-color: transparent; /* Makes text transparent to show gradient */
+    color: transparent; /* Standard property to make text transparent */
+}
+
+
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            padding: 1rem 0;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        .app-container {
+            display: flex;
+            height: calc(100vh - 120px);
+            margin-top: 1rem;
+            gap: 1rem;
+            padding: 0 1rem;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--sidebar-bg);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .add-note-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .add-note-btn:hover {
+            opacity: 0.9;
+        }
+
+        .notes-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .note-item {
+            padding: 0.75rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .note-item:hover {
+            background: var(--hover-color);
+        }
+
+        .note-item h3 {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .note-item p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            background: var(--sidebar-bg);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .note-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .icon-button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .icon-button img {
+            filter: brightness(0) invert(1);
+        }
+
+        .icon-button:hover {
+            opacity: 0.9;
+        }
+
+        .note-content {
+            flex-grow: 1;
+            padding: 1rem;
+        }
+
+        #noteEditor {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 300px;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            SONE AI
+        </div>
+
+        <div class="nav-container">
+            <nav>
+                <a href="index.php">HOME</a>
+                <a href="notes.php">NOTES</a>
+                <a href="pricing.php">PRICING</a>
+                <a href="logout.php">LOGOUT</a>
+            </nav>
+        </div>
+
+        <div class="app-container">
+            <div class="sidebar">
+                <button class="add-note-btn" id="addNoteBtn">Add Note</button>
+                <div class="notes-list" id="notesList">
+                    <!-- Notes will be dynamically added here -->
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="note-header">
+                    <input type="text" id="noteTitle" placeholder="Welcome!" style="background: transparent; border: none; color: var(--text-primary); font-size: 1.2rem; outline: none;">
+                    <div class="note-actions">
+                        <button class="icon-button" id="searchBtn" title="Search"><img src="search.svg" alt=""></button>
+                        <button class="icon-button" id="summarizeBtn" title="Summarize"><img src="summarization.svg" alt=""></button>
+                        <button class="icon-button" id="deleteBtn" title="Delete">Remove Note</button>
+                        <button class="icon-button" id="closeBtn" title="Close"><img src="close.svg" alt=""></button>
+                    </div>
+                </div>
+                <div class="note-content">
+                    <textarea id="noteEditor" placeholder="Start typing your note..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup" id="searchPopup">
+        <h3>Search Notes</h3>
+        <input type="text" id="searchInput" placeholder="Search..." style="width: 100%; padding: 0.5rem; margin: 1rem 0; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 4px;">
+        <div id="searchResults"></div>
+    </div>
+
+    <div class="popup" id="summaryPopup">
+        <h3>AI Summary</h3>
+        <div id="summaryContent" style="margin-top: 1rem;"></div>
+        <button class="add-note-btn" style="margin-top: 1rem; width: 100%;" onclick="document.getElementById('summaryPopup').style.display='none'">Close</button>
+    </div>
+
+    <div class="popup-overlay" id="popupOverlay"></div>
+
+    <script>
+        // State management
+        let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+        let currentNote = null;
+
+        // DOM Elements
+        const notesList = document.getElementById('notesList');
+        const noteEditor = document.getElementById('noteEditor');
+        const noteTitleInput = document.getElementById('noteTitle');
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const searchBtn = document.getElementById('searchBtn');
+        const summarizeBtn = document.getElementById('summarizeBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const searchPopup = document.getElementById('searchPopup');
+        const summaryPopup = document.getElementById('summaryPopup');
+        const popupOverlay = document.getElementById('popupOverlay');
+
+        // Functions
+        function saveNotes() {
+            localStorage.setItem('notes', JSON.stringify(notes));
+        }
+
+        function createNote() {
+            const note = {
+                id: Date.now(),
+                title: 'Untitled Note',
+                content: '',
+                timestamp: new Date().toISOString()
+            };
+            notes.unshift(note);
+            saveNotes();
+            renderNotesList();
+            loadNote(note);
+        }
+
+        function deleteNote() {
+            if (currentNote) {
+                notes = notes.filter(note => note.id !== currentNote.id);
+                saveNotes();
+                renderNotesList();
+                clearEditor();
+            }
+        }
+
+        function updateNote() {
+            if (currentNote) {
+                currentNote.title = noteTitleInput.value;
+                currentNote.content = noteEditor.value;
+                currentNote.timestamp = new Date().toISOString();
+                saveNotes();
+                renderNotesList();
+            }
+        }
+
+        function loadNote(note) {
+            currentNote = note;
+            noteTitleInput.value = note.title;
+            noteEditor.value = note.content;
+            noteTitleInput.disabled = false;
+            noteEditor.disabled = false;
+        }
+
+        function clearEditor() {
+            currentNote = null;
+            noteTitleInput.value = '';
+            noteEditor.value = '';
+            noteTitleInput.disabled = true;
+            noteEditor.disabled = true;
+        }
+
+        function renderNotesList() {
+            notesList.innerHTML = notes.map(note => `
+                <div class="note-item" onclick="loadNote(${JSON.stringify(note).replace(/"/g, '&quot;')})">
+                    <h3>${note.title}</h3>
+                    <p>${new Date(note.timestamp).toLocaleDateString()}</p>
+                </div>
+            `).join('');
+        }
+
+        // Event Listeners
+        addNoteBtn.addEventListener('click', createNote);
+        deleteBtn.addEventListener('click', deleteNote);
+        closeBtn.addEventListener('click', clearEditor);
+
+        noteEditor.addEventListener('input', updateNote);
+        noteTitleInput.addEventListener('input', updateNote);
+
+        searchBtn.addEventListener('click', () => {
+            searchPopup.style.display = 'block';
+            popupOverlay.style.display = 'block';
+        });
+
+        summarizeBtn.addEventListener('click', () => {
+            if (currentNote && currentNote.content) {
+                summaryPopup.style.display = 'block';
+                popupOverlay.style.display = 'block';
+                // Here you would typically make an API call to your AI service
+                document.getElementById('summaryContent').textContent = 'AI Summary loading...';
+            }
+        });
+
+        popupOverlay.addEventListener('click', () => {
+            searchPopup.style.display = 'none';
+            summaryPopup.style.display = 'none';
+            popupOverlay.style.display = 'none';
+        });
+
+        // Initialize
+        renderNotesList();
+        clearEditor();
+    </script>
+</body>
+</html>
+
