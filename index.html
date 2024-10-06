@@ -715,6 +715,16 @@ if (chats.length === 0) {
 
 
 updateChatList();
+
+        function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+}
+
+if (isMobileDevice()) {
+    // Redirect to mobile version of the website
+    window.location.href = "https://sone-ai.vercel.app"; // Replace with your mobile URL
+}
+
     </script>
 
 </body></html>
