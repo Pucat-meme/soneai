@@ -83,7 +83,7 @@
             if (percentage >= 100) {
                 clearInterval(loadingInterval); // Clear interval when loading is complete
                 setTimeout(function() {
-                    window.location.href = ''; // Redirect after 2.5 seconds
+                    window.location.href = '#'; // Redirect after 2.5 seconds
                 }, 250); // Short delay for the final percentage
             }
         }, 150); // Update every 250ms (adjust as needed)
