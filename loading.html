@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<!-- saved from url=(0040)http://localhost/notes%20app/loading.php -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
+<html lang="en"><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading...</title>
-    <link href="./loading_files/css2" rel="stylesheet">
     <style>
         :root {
             --bg-color: #0a0a0a; /* Glossy black background */
@@ -83,11 +81,9 @@
             if (percentage >= 100) {
                 clearInterval(loadingInterval); // Clear interval when loading is complete
                 setTimeout(function() {
-                    window.location.href = '#'; // Redirect after 2.5 seconds
+                    window.location.href = 'https://soneai.vercel.app'; // Redirect after 2.5 seconds
                 }, 250); // Short delay for the final percentage
             }
-        }, 150); // Update every 250ms (adjust as needed)
+        }, 150); // Update every 150ms (adjust as needed)
     </script>
-
-
 </body></html>
