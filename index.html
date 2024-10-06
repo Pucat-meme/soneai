@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0038)http://localhost/notes%20app/index.php -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="en">
+<head>
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SONE AI</title>
-    <link href="./index_files/css2" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
     <style>
 :root {
     --bg-color: #121212;
@@ -301,7 +301,7 @@ main {
             <div class="chat-container" id="chatContainer"></div>
             <div class="input-container">
                 <form id="chatForm" class="input-wrapper">
-                    <textarea class="note-input" id="userInput" placeholder="Message Sone" required=""></textarea>
+                    <textarea class="note-input" id="userInput" placeholder="Message Sone" required></textarea>
                     <button type="submit" class="generate-btn">Send</button>
                 </form>
             </div>
@@ -317,6 +317,17 @@ const chatWindow = document.getElementById('chatWindow');
 let isFirstMessage = true;
 let typingSpeed = 20; // Default typing speed (ms per character)
 let chatbotData = [];
+let userName = '';
+
+/// Load user name from localStorage
+function loadUserName() {
+    userName = localStorage.getItem('userName') || '';
+}
+
+// Save user name to localStorage
+function saveUserName() {
+    localStorage.setItem('userName', userName);
+}
 
 async function loadChatbotData() {
     try {
@@ -343,6 +354,7 @@ async function loadChatbotData() {
 }
 
 loadChatbotData();
+loadUserName();
 
 function cleanText(text) {
     return text.toLowerCase().trim().replace(/[^\w\s]/g, '');
@@ -369,12 +381,15 @@ function findBestMatch(input) {
         return `Today's date is ${getCurrentDate()}.`;
     }
 
-    // Check for questions about specific people
-    const peopleKeywords = ['who is', 'tell me about', 'what do you know about', 'information on'];
-    if (peopleKeywords.some(keyword => cleanedInput.includes(keyword))) {
-        return "I'm an AI language model and don't have real-time information about specific individuals. For the most up-to-date and accurate information about people, I recommend checking reliable online sources.";
+    // Check for name-related queries
+    if (cleanedInput.includes('my name is')) {
+        const newName = input.split('my name is')[1].trim();
+        return handleNameChange(newName);
     }
-
+    if (cleanedInput.includes('whats my name') || cleanedInput.includes('what is my name')) {
+        return handleNameQuery();
+    }
+    
     let bestMatch = null;
     let bestScore = Infinity;
 
@@ -390,7 +405,25 @@ function findBestMatch(input) {
         return bestMatch.response;
     }
 
+    if (bestMatch && bestScore <= Math.floor(cleanedInput.length * 0.3)) {
+        return bestMatch.response;
+    }
+
     return "I'm sorry, I don't understand. Could you please rephrase that?";
+}
+
+function handleNameChange(newName) {
+    userName = newName;
+    saveUserName();
+    return `Thank you! I've updated your name to ${userName}.`;
+}
+
+function handleNameQuery() {
+    if (userName) {
+        return `Your name is ${userName}.`;
+    } else {
+        return "I'm sorry, but I don't know your name yet. You can tell me by saying 'My name is [your name]'.";
+    }
 }
 
 function levenshteinDistance(str1, str2) {
@@ -466,9 +499,6 @@ chatForm.addEventListener('submit', async function(e) {
         const loadingIndicator = createTypingIndicator();
         chatContainer.appendChild(loadingIndicator);
 
-        // Scroll to the loading indicator
-        loadingIndicator.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
         setTimeout(() => {
             loadingIndicator.remove();
             
@@ -479,6 +509,11 @@ chatForm.addEventListener('submit', async function(e) {
             chatContainer.appendChild(messageElement);
             
             typeWriter(messageElement, response);
+            
+            setTimeout(() => {
+                messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                saveChatHistory();
+            }, 100);
         }, 1500);
     }
 });
@@ -512,5 +547,5 @@ function changeTypingSpeed(speed) {
     typingSpeed = speed;
 }
     </script>
-
-</body></html>
+</body>
+</html>
