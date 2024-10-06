@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)http://localhost/notes%20app/loading.php -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <link href="./loading_files/css2" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0a; /* Glossy black background */
+            --text-color: #ffffff;
+            --loading-circle-bg: linear-gradient(45deg, #00ffff, #ff00ff);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .loading-container {
+            text-align: center;
+        }
+
+        .loading-circle {
+            width: 70px; /* Increased size for more impact */
+            height: 70px;
+            border-radius: 50%;
+            background: var(--loading-circle-bg);
+            animation: spin 1s linear infinite, pulse 1.5s ease-in-out infinite;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        p {
+            font-size: 1.5rem; /* Slightly larger font for better visibility */
+            margin: 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* Soft glow for text */
+        }
+
+        .percentage {
+            font-size: 1.2rem; /* Font size for percentage */
+            margin-top: 10px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* Soft glow for text */
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="loading-circle"></div>
+        <p>Loading...</p>
+        <p class="percentage" id="loadingPercentage">100%</p> <!-- Percentage display -->
+    </div>
+
+    <script>
+        let percentage = 0;
+        const loadingInterval = setInterval(function() {
+            percentage += 10; // Increment percentage
+            document.getElementById('loadingPercentage').innerText = percentage + '%'; // Update percentage display
+
+            if (percentage >= 100) {
+                clearInterval(loadingInterval); // Clear interval when loading is complete
+                setTimeout(function() {
+                    window.location.href = ''; // Redirect after 2.5 seconds
+                }, 250); // Short delay for the final percentage
+            }
+        }, 150); // Update every 250ms (adjust as needed)
+    </script>
+
+
+</body></html>
