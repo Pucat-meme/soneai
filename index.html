@@ -546,6 +546,16 @@ userInput.addEventListener('keydown', function(e) {
 function changeTypingSpeed(speed) {
     typingSpeed = speed;
 }
+
+        function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+}
+
+if (isMobileDevice()) {
+    // Redirect to mobile version of the website
+    window.location.href = "https://sonelabs.vercel.app"; // Replace with your mobile URL
+}
+
     </script>
 </body>
 </html>
